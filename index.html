@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        :root {
+            --bg-primary: #f5f5f5;
+            --text-primary: #333;
+            --card-bg: #fff;
+            --accent: #4CAF50;
+            transition: all 1s ease;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-primary);
+            min-height: 300vh;
+            transition: background-color 1s ease;
+            overflow-x: hidden;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.7;
+            /* Added for better visibility of particles */
+        }
+
+        .title {
+            text-align: center;
+            padding: 2rem;
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            transition: color 1s ease;
+        }
+
+        .content-wrapper {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .description {
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+            color: var(--text-primary);
+            transition: all 1s ease;
+            margin-bottom: 2rem;
+        }
+
+        .player-container {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin: 0 auto;
+        }
+
+        .player-container.fixed {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .player-container.collapsed {
+            width: 200px;
+            height: 200px;
+        }
+
+        .player-container.expanded {
+            width: 600px;
+            height: 200px;
+        }
+
+        .play-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+        }
+
+        .play-button:hover {
+            transform: scale(1.05);
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            height: 8px;
+            background: #eee;
+            margin-left: 1rem;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.1s linear;
+        }
+
+        .progress-handle {
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: grab;
+            display: none;
+        }
+
+        .progress-container:hover .progress-handle {
+            display: block;
+        }
+
+        .stage-indicator {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--card-bg);
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stage-indicator.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particle-canvas"></canvas>
+    <h1 class="title">Stages of Grief</h1>
+
+    <div class="content-wrapper">
+        <div class="description">
+            <p>The five stages of grief, known as the Kübler-Ross model, describe a series of emotions experienced
+                during profound loss: denial, anger, bargaining, depression, and acceptance.</p>
+            <p>This interactive experience guides you through these stages through an audio journey. As you listen, the
+                environment will shift to reflect each emotional state.</p>
+            <p>Scroll down to begin your journey through the stages of grief.</p>
+        </div>
+
+        <div class="player-container collapsed">
+            <button class="play-button">▶</button>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+                <div class="progress-handle"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stage-indicator">Current Stage: Denial</div>
+
+    <script>
+        const playerContainer = document.querySelector('.player-container');
+        const progressContainer = document.querySelector('.progress-container');
+        const progressBar = document.querySelector('.progress-bar');
+        const progressHandle = document.querySelector('.progress-handle');
+        const playButton = document.querySelector('.play-button');
+        const stageIndicator = document.querySelector('.stage-indicator');
+        let isPlaying = false;
+        let progress = 0;
+        let progressInterval;
+        let isDragging = false;
+
+        const stages = {
+            denial: {
+                time: 0,
+                colors: {
+                    '--bg-primary': '#f5f5f5',
+                    '--text-primary': '#334155',
+                    '--card-bg': '#ffffff',
+                    '--accent': '#94a3b8'
+                }
+            },
+            anger: {
+                time: 10,
+                colors: {
+                    '--bg-primary': '#fee2e2',
+                    '--text-primary': '#7f1d1d',
+                    '--card-bg': '#fecaca',
+                    '--accent': '#dc2626'
+                }
+            },
+            bargaining: {
+                time: 20,
+                colors: {
+                    '--bg-primary': '#fef9c3',
+                    '--text-primary': '#854d0e',
+                    '--card-bg': '#fef08a',
+                    '--accent': '#ca8a04'
+                }
+            },
+            depression: {
+                time: 30,
+                colors: {
+                    '--bg-primary': '#e0e7ff',
+                    '--text-primary': '#312e81',
+                    '--card-bg': '#c7d2fe',
+                    '--accent': '#4338ca'
+                }
+            },
+            acceptance: {
+                time: 40,
+                colors: {
+                    '--bg-primary': '#dcfce7',
+                    '--text-primary': '#166534',
+                    '--card-bg': '#bbf7d0',
+                    '--accent': '#16a34a'
+                }
+            }
+        };
+
+        function updateColors(timeInSeconds) {
+            let currentStage = 'denial';
+            for (const [stage, data] of Object.entries(stages)) {
+                if (timeInSeconds >= data.time) {
+                    currentStage = stage;
+                }
+            }
+
+            Object.entries(stages[currentStage].colors).forEach(([property, value]) => {
+                document.documentElement.style.setProperty(property, value);
+            });
+
+            stageIndicator.textContent = `Current Stage: ${currentStage.charAt(0).toUpperCase() + currentStage.slice(1)}`;
+        }
+
+        // Handle scroll
+        window.addEventListener('scroll', () => {
+            const playerRect = playerContainer.getBoundingClientRect();
+            const descriptionRect = document.querySelector('.description').getBoundingClientRect();
+            const scrollPosition = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const triggerPoint = descriptionRect.bottom - windowHeight / 2;
+            const scrollProgress = Math.min(Math.max((scrollPosition - triggerPoint) / (windowHeight * 0.3), 0), 1);
+
+            if (scrollPosition > triggerPoint) {
+                playerContainer.classList.add('fixed');
+                stageIndicator.classList.add('visible');
+            } else {
+                playerContainer.classList.remove('fixed');
+                stageIndicator.classList.remove('visible');
+            }
+
+            // Gradual expansion
+            const width = 200 + (400 * scrollProgress);
+            playerContainer.style.width = `${width}px`;
+            progressContainer.style.opacity = scrollProgress;
+        });
+
+        // Progress bar interaction
+        progressContainer.addEventListener('mousedown', (e) => {
+            const rect = progressContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            progress = (x / rect.width) * 100;
+            updateProgress(progress);
+            isDragging = true;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const rect = progressContainer.getBoundingClientRect();
+                const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+                progress = (x / rect.width) * 100;
+                updateProgress(progress);
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        function updateProgress(value) {
+            progress = Math.min(Math.max(value, 0), 100);
+            progressBar.style.width = `${progress}%`;
+            progressHandle.style.left = `${progress}%`;
+            const timeInSeconds = (progress / 100) * 50;
+            updateColors(timeInSeconds);
+        }
+
+        // Handle play button click
+        playButton.addEventListener('click', () => {
+            const descriptionRect = document.querySelector('.description').getBoundingClientRect();
+            const triggerPoint = descriptionRect.bottom - window.innerHeight / 2;
+
+            if (window.scrollY <= triggerPoint) {
+                window.scrollTo({
+                    top: triggerPoint + 100,
+                    behavior: 'smooth'
+                });
+            }
+
+            isPlaying = !isPlaying;
+            playButton.innerHTML = isPlaying ? '❚❚' : '▶';
+
+            if (isPlaying) {
+                startProgress();
+            } else {
+                stopProgress();
+            }
+        });
+
+        function startProgress() {
+            stopProgress(); // Clear any existing interval
+            progressInterval = setInterval(() => {
+                progress += 0.5;
+                if (progress >= 100) {
+                    stopProgress();
+                    progress = 0;
+                    isPlaying = false;
+                    playButton.innerHTML = '▶';
+                }
+                updateProgress(progress);
+            }, 100);
+        }
+
+        function stopProgress() {
+            clearInterval(progressInterval);
+        }
+
+        // Particle System
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.originX = x;
+                this.originY = y;
+                this.color = color;
+                this.size = Math.random() * 3 + 2;
+                this.velocity = {
+                    x: Math.random() * 0.2 - 0.1,
+                    y: -Math.random() * 0.5 - 0.5
+                };
+                this.life = 1.5;
+                this.maxLife = Math.random() * 200 + 100;
+                this.age = 0;
+            }
+
+            update(flowField) {
+                // Flow field influence
+                const cellX = Math.floor(this.x / flowField.cellSize);
+                const cellY = Math.floor(this.y / flowField.cellSize);
+                const index = cellY * flowField.cols + cellX;
+
+                if (flowField.field[index]) {
+                    this.velocity.x += flowField.field[index].x * 0.1;
+                    this.velocity.y += flowField.field[index].y * 0.1;
+                }
+
+                // Update position
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+
+                // Age particle
+                this.age++;
+                this.life = Math.max(0, 1 - (this.age / this.maxLife));
+
+                // Reset if offscreen or dead
+                if (this.y < 0 || this.x < 0 || this.x > window.innerWidth || this.life <= 0) {
+                    this.reset();
+                }
+            }
+
+            reset() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = window.innerHeight + 10;
+                this.age = 0;
+                this.life = 1;
+                this.velocity.x = Math.random() * 0.2 - 0.1;
+                this.velocity.y = -Math.random() * 0.5 - 0.5;
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                const alpha = this.life * 0.8; // Increased base opacity
+                ctx.fillStyle = `rgba(${this.color.join(',')},${alpha})`;
+                ctx.fill();
+            }
+        }
+
+        class FlowField {
+            constructor() {
+                this.cellSize = 50;
+                this.rows = Math.ceil(window.innerHeight / this.cellSize);
+                this.cols = Math.ceil(window.innerWidth / this.cellSize);
+                this.field = [];
+                this.animationOffset = 0;
+                this.init();
+            }
+
+            init() {
+                for (let y = 0; y < this.rows; y++) {
+                    for (let x = 0; x < this.cols; x++) {
+                        const angle = (Math.cos(x * 0.1) + Math.sin(y * 0.1)) * Math.PI * 2;
+                        this.field[y * this.cols + x] = {
+                            x: Math.cos(angle) * 0.1,
+                            y: Math.sin(angle) * 0.1
+                        };
+                    }
+                }
+            }
+
+            update() {
+                this.animationOffset += 0.01;
+                for (let y = 0; y < this.rows; y++) {
+                    for (let x = 0; x < this.cols; x++) {
+                        const angle = (Math.cos(x * 0.1 + this.animationOffset) +
+                            Math.sin(y * 0.1 + this.animationOffset)) * Math.PI * 2;
+                        this.field[y * this.cols + x] = {
+                            x: Math.cos(angle) * 0.1,
+                            y: Math.sin(angle) * 0.1
+                        };
+                    }
+                }
+            }
+        }
+
+        // Canvas setup
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Initialize particles and flow field
+        const flowField = new FlowField();
+        const particles = [];
+        const particleCount = 200;
+
+        function getColorFromStage(timeInSeconds) {
+            // Define vibrant colors for each stage
+            const stageColors = {
+                denial: [100, 149, 237],  // Bright cornflower blue
+                anger: [255, 69, 58],     // Vibrant red
+                bargaining: [255, 191, 0], // Golden yellow
+                depression: [138, 43, 226], // Vibrant purple
+                acceptance: [46, 204, 113]  // Emerald green
+            };
+
+            let currentStage = 'denial';
+            for (const [stage, data] of Object.entries(stages)) {
+                if (timeInSeconds >= data.time) {
+                    currentStage = stage;
+                }
+            }
+
+            const baseColor = stageColors[currentStage];
+            // Add color variation for each particle
+            return [
+                Math.min(baseColor[0] + (Math.random() * 30 - 15), 255),
+                Math.min(baseColor[1] + (Math.random() * 30 - 15), 255),
+                Math.min(baseColor[2] + (Math.random() * 30 - 15), 255)
+            ];
+        }
+
+        // Initialize particles
+        for (let i = 0; i < particleCount; i++) {
+            const x = Math.random() * canvas.width;
+            const y = canvas.height + 10;
+            const color = getColorFromStage(0);
+            particles.push(new Particle(x, y, color));
+        }
+
+        // Animation loop
+        // Update the animation loop to clear background properly
+        function animate() {
+            // Clear the canvas completely
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            flowField.update();
+
+            // Update particle colors based on current stage
+            const timeInSeconds = (progress / 100) * 50;
+            const currentColor = getColorFromStage(timeInSeconds);
+
+            particles.forEach(particle => {
+                // Update particle color smoothly
+                particle.color = currentColor;
+                particle.update(flowField);
+                particle.draw(ctx);
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+
+</html>
