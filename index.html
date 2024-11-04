@@ -3,7 +3,6 @@
 
 <head>
     <style>
-        /* Your CSS remains unchanged */
         :root {
             --bg-primary: #f5f5f5;
             --text-primary: #333;
@@ -165,12 +164,78 @@
             opacity: 1;
         }
 
+        .hidden {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .visible {
+            display: block;
+            opacity: 1;
+        }
+
+        .additional-content {
+        padding: 2rem;
+        background: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: var(--text-primary);
+        transition: opacity 0.5s ease;
+        margin-top: 2rem;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    .additional-content.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+
+        /* menu bar */
+        .menu-bar {
+            display: flex;
+            justify-content: center;
+            background-color: var(--card-bg);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .menu-bar a {
+            text-decoration: none;
+            color: var(--text-primary);
+            margin: 0 2rem;
+            font-size: 1.25rem;
+            transition: color 0.3s ease;
+        }
+
+        .menu-bar a:hover {
+            color: var(--accent);
+        }
+
+        .menu-bar a.active {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+
     </style>
 </head>
 
 <body>
     <canvas id="particle-canvas"></canvas>
+    <div class="menu-bar">
+        <a href="index.html" class="active">Home</a>
+        <a href="story.html">Story</a>
+    </div>
+    
+    <canvas id="particle-canvas"></canvas>
     <h1 class="title">Stages of Grief</h1>
+
 
     <div class="content-wrapper">
         <div class="description">
@@ -188,6 +253,13 @@
                 <div class="progress-handle"></div>
             </div>
         </div>
+
+        <div class="additional-content hidden">
+            <h2>Images on the Stages</h2>
+            <p>Each stage of grief represents a different challenge and set of emotions. Understanding these can help you process difficult times more effectively.</p>
+            <img src="reflection.jpg" alt="Reflections Image" width="600" height="400">
+        </div>
+    
     </div>
 
     <div class="stage-indicator">Current Stage: Denial</div>
@@ -268,13 +340,13 @@
             stageIndicator.textContent = `Current Stage: ${currentStage.charAt(0).toUpperCase() + currentStage.slice(1)}`;
         }
 
-        // Handle scroll
         window.addEventListener('scroll', () => {
             const playerRect = playerContainer.getBoundingClientRect();
             const descriptionRect = document.querySelector('.description').getBoundingClientRect();
             const scrollPosition = window.scrollY;
             const windowHeight = window.innerHeight;
             const triggerPoint = descriptionRect.bottom - (windowHeight * 0.4);
+            const imageElement = document.getElementById('stageImage');
 
             const scrollProgress = Math.min(Math.max((scrollPosition - triggerPoint) / (windowHeight * 0.3), 0), 1);
 
@@ -286,11 +358,19 @@
                 stageIndicator.classList.remove('visible');
             }
 
-            // Fix: Use backticks for template literals
             const width = 200 + (400 * scrollProgress);
+            const additionalContent = document.querySelector('.additional-content');
+
+            if (window.scrollY > triggerPoint) {
+                additionalContent.classList.add('visible');
+            } else {
+                additionalContent.classList.remove('visible');
+            }
+
             playerContainer.style.width = `${width}px`;
             progressContainer.style.opacity = scrollProgress;
         });
+
 
         // Progress bar interaction
         progressContainer.addEventListener('mousedown', (e) => {
