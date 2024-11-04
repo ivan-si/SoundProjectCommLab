@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery with Descriptions and Audio</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 2rem;
+        }
+
+        /* Menu Bar Styles */
+        .menu-bar {
+            display: flex;
+            justify-content: center;
+            background-color: #fff;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .menu-bar a {
+            text-decoration: none;
+            color: #333;
+            margin: 0 2rem;
+            font-size: 1.25rem;
+            transition: color 0.3s ease;
+        }
+
+        .menu-bar a:hover {
+            color: #4CAF50;
+        }
+
+        .menu-bar a.active {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .gallery-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .image-card {
+            display: flex;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .image-card:hover {
+            transform: scale(1.02);
+        }
+
+        .image-card img {
+            width: 50%;
+            object-fit: cover;
+        }
+
+        .image-description {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 50%;
+        }
+
+        .image-description h3 {
+            margin: 0 0 0.5rem;
+        }
+
+        .audio-player {
+            margin-top: 1rem;
+        }
+
+        .audio-player audio {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu Bar -->
+    <div class="menu-bar">
+        <a href="index.html">Home</a>
+        <a href="story.html" class="active">Story</a>
+    </div>
+
+    <h1 class="title">Image Gallery with Audio Descriptions</h1>
+    <div class="gallery-container">
+        <!-- Repeat this block for each image -->
+        <div class="image-card">
+            <img src="image1.jpg" alt="Description of Image 1">
+            <div class="image-description">
+                <h3>Image 1 Title</h3>
+                <p>This is a brief description of Image 1. It could include context or background details relevant to the image.</p>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="audio1.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-card">
+            <img src="image2.jpg" alt="Description of Image 2">
+            <div class="image-description">
+                <h3>Image 2 Title</h3>
+                <p>This is a brief description of Image 2. It could include context or background details relevant to the image.</p>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="audio2.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+
+        <!-- Repeat the structure for 6 more images -->
+        <div class="image-card">
+            <img src="image3.jpg" alt="Description of Image 3">
+            <div class="image-description">
+                <h3>Image 3 Title</h3>
+                <p>This is a brief description of Image 3. It could include context or background details relevant to the image.</p>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="audio3.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-card">
+            <img src="image4.jpg" alt="Description of Image 4">
+            <div class="image-description">
+                <h3>Image 4 Title</h3>
+                <p>This is a brief description of Image 4. It could include context or background details relevant to the image.</p>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="audio4.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-card">
+            <img src="image5.jpg" alt="Description of Image 5">
+            <div class="image-description">
+                <h3>Image 5 Title</h3>
+                <p>This is a brief description of Image 5. It could include context or background details relevant to the image.</p>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="audio5.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-card">
+            <img src="image6.jpg" alt="Description of Image 6">
+            <div class="image-description">
+                <h3>Image 6 Title</h3>
+                <p>This is a brief description of Image 6. It could include context or background details relevant to the image.</p>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="audio6.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-card">
+            <img src="image7.jpg" alt="Description of Image 7">
+            <div class="image-description">
+                <h3>Image 7 Title</h3>
+                <p>This is a brief description of Image 7. It could include context or background details relevant to the image.</p>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="audio7.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-card">
+            <img src="image8.jpg" alt="Description of Image 8">
+            <div class="image-description">
+                <h3>Image 8 Title</h3>
+                <p>This is a brief description of Image 8. It could include context or background details relevant to the image.</p>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="audio8.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
