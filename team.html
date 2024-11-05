@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Domine:wght@400..700&display=swap" rel="stylesheet">
+    
+
+    <title>Meet Our Team</title>
+    <style>
+        /* Reset and Body Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding-bottom: 2px;
+            font-family:'Domine', 'Roboto',Arial, sans-serif;
+        }
+        h1 {
+            padding-top: 20px;
+        }
+
+        body {
+            background-color: #E4E4DE;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Menu Bar Styles */
+        .menu-bar {
+            display: flex;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        .menu-bar a {
+            text-decoration: none;
+            color: #333;
+            margin: 0 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .menu-bar a:hover {
+            color: #595f39;
+            transform: translateY(-3px);
+        }
+
+        .menu-bar a.active {
+            color: #595f39;
+            font-weight: bold;
+            border-bottom: 2px solid #595f39;
+        }
+
+        /* Heading Styling */
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* Container for the flexbox layout */
+        .team-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            max-width: 680px; /* Limits width to fit two cards per row */
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            max-width: 320px; /* Original size for balanced look */
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Image Styling */
+        .card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Text Content Styling */
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            color: #595f39;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .team-container {
+                max-width: 100%; /* Allow full width on smaller screens */
+            }
+
+            .card {
+                max-width: 100%; /* Single card per row on smaller screens */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Menu Bar -->
+    <div class="menu-bar">
+        <a href="index.html">Home</a>
+        <a href="story.html" >Story</a>
+        <a href="team.html" class="active">Team</a>
+    </div>
+
+    <!-- Main Content -->
+    <h1>Meet the Team</h1>
+
+    <div class="team-container">
+        <!-- Card 1 -->
+        <div class="card">
+            <img src="ian.jpeg" alt="Team Member 1">
+            <div class="card-content">
+                <h3>Ian</h3>
+                <p>Sound</p>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card">
+            <img src="mariam.jpeg" alt="Team Member 2">
+            <div class="card-content">
+                <h3>Mariam</h3>
+                <p>Sound</p>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card">
+            <img src="uditi.jpg" alt="Team Member 3">
+            <div class="card-content">
+                <h3>Uditi</h3>
+                <p>Code</p>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="card">
+            <img src="ivan.jpeg" alt="Team Member 4">
+            <div class="card-content">
+                <h3>Ivan</h3>
+                <p>Code</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
