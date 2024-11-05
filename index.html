@@ -15,7 +15,7 @@
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: var(--bg-primary);
-            min-height: 300vh;
+            min-height: 115vh;
             transition: background-color 1s ease;
             overflow-x: hidden;
         }
@@ -29,7 +29,6 @@
             pointer-events: none;
             z-index: -1;
             opacity: 0.7;
-            /* Added for better visibility of particles */
         }
 
         .title {
@@ -70,21 +69,62 @@
             margin: 0 auto;
         }
 
+        .description-container {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .description {
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+            color: var(--text-primary);
+            transition: all 1s ease;
+            margin-bottom: 0;
+        }
+
+        .stage-description {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: all 0.5s ease;
+        }
+
+        .stage-description.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .player-container.fixed {
             position: fixed;
-    top: 65%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 700px; /* Increase the width */
-    height: 250px; /* Increase the height */
+            top: 75%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 250px;
+        }
+
+        .player-container.relative {
+            position: relative;
+            margin: 1rem auto 0.5rem auto;
+            width: 700px;
+            height: 250px;
         }
 
         .player-container.collapsed {
             width: 200px;
             height: 200px;
             display: flex;
-            justify-content: center; /* Center play button horizontally */
-            align-items: center;     /* Center play button vertically */
+            justify-content: center;
+            /* Center play button horizontally */
+            align-items: center;
+            /* Center play button vertically */
         }
 
         .player-container.expanded {
@@ -176,21 +216,21 @@
         }
 
         .additional-content {
-        padding: 2rem;
-        background: var(--card-bg);
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        color: var(--text-primary);
-        transition: opacity 0.5s ease;
-        margin-top: 2rem;
-        opacity: 0;
-        transform: translateY(20px);
-    }
+            padding: 0.5rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: var(--text-primary);
+            transition: opacity 0.5s ease;
+            margin-top: 0.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
 
-    .additional-content.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
+        .additional-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
 
         /* menu bar */
@@ -221,8 +261,6 @@
             color: var(--accent);
             font-weight: bold;
         }
-
-
     </style>
 </head>
 
@@ -232,34 +270,33 @@
         <a href="index.html" class="active">Home</a>
         <a href="story.html">Story</a>
     </div>
-    
-    <canvas id="particle-canvas"></canvas>
     <h1 class="title">Stages of Grief</h1>
 
-
     <div class="content-wrapper">
-        <div class="description">
-            <p>The five stages of grief, known as the Kübler-Ross model, describe a series of emotions experienced
-                during profound loss: denial, anger, bargaining, depression, and acceptance.</p>
-            <p>This interactive experience guides you through these stages through an audio journey. As you listen, the
-                environment will shift to reflect each emotional state.</p>
-            <p>Scroll down to begin your journey through the stages of grief.</p>
+        <div class="description-container">
+            <div class="description active" data-stage="intro"></div>
+            <div class="description hidden" data-stage="denial"></div>
+            <div class="description hidden" data-stage="anger"></div>
+            <div class="description hidden" data-stage="bargaining"></div>
+            <div class="description hidden" data-stage="depression"></div>
+            <div class="description hidden" data-stage="acceptance"></div>
         </div>
+    </div>
+    </div>
 
-        <div class="player-container collapsed">
-            <button class="play-button">▶</button>
-            <div class="progress-container">
-                <div class="progress-bar"></div>
-                <div class="progress-handle"></div>
-            </div>
+    <div class="player-container collapsed">
+        <button class="play-button">▶</button>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+            <div class="progress-handle"></div>
         </div>
+    </div>
 
-        <div class="additional-content hidden">
-            <h2>Images on the Stages</h2>
-            <p>Each stage of grief represents a different challenge and set of emotions. Understanding these can help you process difficult times more effectively.</p>
-            <img src="reflection.jpg" alt="Reflections Image" width="600" height="400">
-        </div>
-    
+    <div class="additional-content hidden">
+        <h2>Images on the Stages</h2>
+        <p>Each stage of grief represents a different challenge and set of emotions. Understanding these can help
+            you process difficult times more effectively.</p>
+    </div>
     </div>
 
     <div class="stage-indicator">Current Stage: Denial</div>
@@ -275,54 +312,133 @@
         let progress = 0;
         let progressInterval;
         let isDragging = false;
+        let dragStartTime = 0;
+        let hasFinished = false;
+        // Define colors outside animation loop for consistency
+        const stageColors = {
+            intro: [100, 149, 237],     // Cornflower blue
+            denial: [100, 149, 237],    // Cornflower blue
+            anger: [255, 69, 58],       // Red
+            bargaining: [255, 191, 0],  // Golden yellow
+            depression: [138, 43, 226],  // Purple
+            acceptance: [46, 204, 113]   // Green
+        };
 
         const stages = {
-            denial: {
+            intro: {
                 time: 0,
+                colors: {
+                    '--bg-primary': '#f5f5f5',
+                    '--text-primary': '#333',
+                    '--card-bg': '#fff',
+                    '--accent': '#4CAF50'
+                },
+                content: `
+            <p>The five stages of grief, known as the Kübler-Ross model, describe a series of emotions experienced during profound loss: denial, anger, bargaining, depression, and acceptance.</p>
+            <p>This interactive experience guides you through these stages through an audio journey. As you listen, the environment will shift to reflect each emotional state.</p>
+            <p>Scroll down to begin your journey through the stages of grief.</p>
+        `
+            },
+            denial: {
+                time: 45,
                 colors: {
                     '--bg-primary': '#f5f5f5',
                     '--text-primary': '#334155',
                     '--card-bg': '#ffffff',
                     '--accent': '#94a3b8'
-                }
+                },
+                content: `
+            <h2>Stage 1: Denial</h2>
+            <p>In this initial stage, we often respond to loss with numbed disbelief. Denial helps us to pace our feelings of grief and is a common defense mechanism that buffers the immediate shock.</p>
+            <p>The world becomes meaningless and overwhelming. Life makes no sense. We are in a state of shock and denial. We wonder how we can go on, if we can go on, why we should go on.</p>
+        `
             },
             anger: {
-                time: 10,
+                time: 79,
                 colors: {
                     '--bg-primary': '#fee2e2',
                     '--text-primary': '#7f1d1d',
                     '--card-bg': '#fecaca',
                     '--accent': '#dc2626'
-                }
+                },
+                content: `
+            <h2>Stage 2: Anger</h2>
+            <p>As the masking effects of denial begin to wear, reality and its pain re-emerge. We are not ready. The intense emotion is deflected from our vulnerable core, redirected and expressed instead as anger.</p>
+            <p>The anger may be aimed at inanimate objects, complete strangers, friends or family. We may also feel guilty for being angry, making us more angry.</p>
+        `
             },
             bargaining: {
-                time: 20,
+                time: 99,
                 colors: {
                     '--bg-primary': '#fef9c3',
                     '--text-primary': '#854d0e',
                     '--card-bg': '#fef08a',
                     '--accent': '#ca8a04'
-                }
+                },
+                content: `
+            <h2>Stage 3: Bargaining</h2>
+            <p>The normal reaction to feelings of helplessness and vulnerability is often a need to regain control. We may find ourselves making a deal with a higher power, attempting to postpone the inevitable.</p>
+            <p>This is a weaker line of defense to protect us from the painful reality. We remain in the past, trying to negotiate our way out of the hurt.</p>
+        `
             },
             depression: {
-                time: 30,
+                time: 120,
                 colors: {
                     '--bg-primary': '#e0e7ff',
                     '--text-primary': '#312e81',
                     '--card-bg': '#c7d2fe',
                     '--accent': '#4338ca'
-                }
+                },
+                content: `
+            <h2>Stage 4: Depression</h2>
+            <p>Two types of depression are associated with mourning. The first one is a reaction to practical implications relating to the loss. The second type of depression is more subtle and private.</p>
+            <p>It is our quiet preparation to separate and to bid our loved one farewell. Sometimes all we really need is a hug.</p>
+        `
             },
             acceptance: {
-                time: 40,
+                time: 140,
                 colors: {
                     '--bg-primary': '#dcfce7',
                     '--text-primary': '#166534',
                     '--card-bg': '#bbf7d0',
                     '--accent': '#16a34a'
-                }
+                },
+                content: `
+            <h2>Stage 5: Acceptance</h2>
+            <p>This final stage comes with peace and understanding of the loss. It is not necessarily a mark of bravery to resist the inevitable and deny ourselves the opportunity to make our peace.</p>
+            <p>We find a way to live with the new reality. We learn to live with it. It is the new norm with which we must learn to live.</p>
+        `
             }
         };
+
+        //  Get the intro description container.
+        const introDescription = document.querySelector('.description[data-stage="intro"]');
+
+        function getColorFromStage(timeInSeconds) {
+            let currentStage = 'intro';
+
+            // Use the stages object that's already defined in your code
+            for (const [stage, data] of Object.entries(stages)) {
+                if (timeInSeconds >= data.time) {
+                    currentStage = stage;
+                }
+            }
+
+            return stageColors[currentStage] || stageColors.intro; // Fallback to intro color
+        }
+
+        // Function to set the intro content
+        function setIntroContent() {
+            if (introDescription && stages.intro && stages.intro.content) {
+                introDescription.innerHTML = stages.intro.content;
+            } else {
+                console.error("Error: Could not set intro content. Check stages object and HTML.");
+            }
+        }
+
+        // Call the function to set the content when the page loads
+        window.addEventListener('DOMContentLoaded', setIntroContent);
+
 
         function updateColors(timeInSeconds) {
             let currentStage = 'denial';
@@ -342,43 +458,67 @@
 
         window.addEventListener('scroll', () => {
             const playerRect = playerContainer.getBoundingClientRect();
-            const descriptionRect = document.querySelector('.description').getBoundingClientRect();
+            const descriptionRect = document.querySelector('.description-container').getBoundingClientRect();
             const scrollPosition = window.scrollY;
             const windowHeight = window.innerHeight;
-            const triggerPoint = descriptionRect.bottom - (windowHeight * 0.4);
-            const imageElement = document.getElementById('stageImage');
 
-            const scrollProgress = Math.min(Math.max((scrollPosition - triggerPoint) / (windowHeight * 0.3), 0), 1);
+            // Start animation earlier by adjusting the trigger point
+            const triggerPoint = descriptionRect.bottom - (windowHeight * 0.6); // Changed from 0.4
+
+            // Compress the animation duration by reducing the denominator
+            const scrollProgress = Math.min(Math.max((scrollPosition - triggerPoint) / (windowHeight * 0.2), 0), 1); // Changed from 0.3
 
             if (scrollPosition > triggerPoint) {
-                playerContainer.classList.add('fixed');
+                if (scrollProgress >= 1) {
+                    playerContainer.classList.remove('fixed');
+                    playerContainer.classList.add('relative');
+                } else {
+                    playerContainer.classList.add('fixed');
+                    playerContainer.classList.remove('relative');
+                }
                 stageIndicator.classList.add('visible');
             } else {
-                playerContainer.classList.remove('fixed');
+                playerContainer.classList.remove('fixed', 'relative');
                 stageIndicator.classList.remove('visible');
             }
 
             const width = 200 + (400 * scrollProgress);
-            const additionalContent = document.querySelector('.additional-content');
-
-            if (window.scrollY > triggerPoint) {
-                additionalContent.classList.add('visible');
-            } else {
-                additionalContent.classList.remove('visible');
-            }
-
             playerContainer.style.width = `${width}px`;
             progressContainer.style.opacity = scrollProgress;
+
+            // Update description based on current stage
+            updateStageDescription(progress);
         });
 
+        const audio = new Audio('Assignment3final.mp3'); // Make sure the path is correct
+        audio.addEventListener('ended', () => {
+            stopProgress();
+            progress = 0;
+            isPlaying = false;
+            hasFinished = true;
+            playButton.innerHTML = '▶';
+            resetSite();
+            updateProgress(0); // Reset progress bar visually
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            if (isPlaying && !isDragging) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progress = percent;
+                updateProgress(progress);
+            }
+        });
 
         // Progress bar interaction
         progressContainer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            dragStartTime = audio.currentTime; // Store the time when dragging started
             const rect = progressContainer.getBoundingClientRect();
             const x = e.clientX - rect.left;
             progress = (x / rect.width) * 100;
-            updateProgress(progress);
-            isDragging = true;
+            updateProgress(progress);  // Update immediately on mousedown
+            audio.pause(); // Pause the audio while dragging
+
         });
 
         window.addEventListener('mousemove', (e) => {
@@ -390,17 +530,33 @@
             }
         });
 
+
         window.addEventListener('mouseup', () => {
-            isDragging = false;
+            if (isDragging) {
+                isDragging = false;
+                audio.currentTime = (progress / 100) * audio.duration;  // Set the audio time
+                if (isPlaying) {
+                    audio.play(); // Resume playback if it was playing before dragging
+                }
+
+            }
+        });
+
+        playerContainer.addEventListener('click', () => {
+            updateStageDescription(progress);
+        });
+
+        progressContainer.addEventListener('mousemove', () => {
+            updateStageDescription(progress);
         });
 
         function updateProgress(value) {
             progress = Math.min(Math.max(value, 0), 100);
-            // Fix: Use backticks for template literals
             progressBar.style.width = `${progress}%`;
             progressHandle.style.left = `${progress}%`;
-            const timeInSeconds = (progress / 100) * 50;
+            const timeInSeconds = (progress / 100) * audio.duration; // Use audio duration
             updateColors(timeInSeconds);
+            updateStageDescription();
         }
 
         // Handle play button click
@@ -419,94 +575,104 @@
             playButton.innerHTML = isPlaying ? '❚❚' : '▶';
 
             if (isPlaying) {
+                audio.play();
                 startProgress();
+
             } else {
+                audio.pause();
                 stopProgress();
             }
         });
 
-        function startProgress() {
-            stopProgress(); // Clear any existing interval
-            progressInterval = setInterval(() => {
-                progress += 0.5;
-                if (progress >= 100) {
-                    stopProgress();
-                    progress = 0;
-                    isPlaying = false;
-                    playButton.innerHTML = '▶';
+        const descriptionContainers = document.querySelectorAll('.description');
+
+        function updateStageDescription() {
+            const timeInSeconds = (progress / 100) * audio.duration;
+            let currentStage = 'intro';
+
+            for (const [stage, data] of Object.entries(stages)) {
+                if (timeInSeconds >= data.time) {
+                    currentStage = stage;
                 }
-                updateProgress(progress);
-            }, 100);
+            }
+
+            const descriptionContainers = document.querySelectorAll('.description');
+            descriptionContainers.forEach(desc => {
+                if (desc.dataset.stage === currentStage) {
+                    desc.innerHTML = stages[currentStage].content; // Set content from stages object
+                    desc.classList.add('active');
+                    desc.classList.remove('hidden');
+                } else {
+                    desc.classList.remove('active');
+                    desc.classList.add('hidden');
+                }
+            });
+
+            // Update the stage indicator
+            const stageIndicator = document.querySelector('.stage-indicator');
+            stageIndicator.textContent = `Current Stage: ${currentStage.charAt(0).toUpperCase() + currentStage.slice(1)}`;
         }
+
+        function startProgress() {
+            if (!hasFinished) {
+                if (!audio.duration) { // Handle cases where duration isn't immediately available
+                    audio.onloadedmetadata = () => {
+                        startProgress(); // Call startProgress again once duration is known
+                        audio.onloadedmetadata = null; // Remove the handler to prevent repeated calls
+                    };
+                    return; // Exit the function to avoid starting the interval prematurely
+                }
+                audio.play();
+                progressInterval = setInterval(() => {
+                    if (!isDragging) {  // Only update if the user isn't manually dragging
+                        progress = (audio.currentTime / audio.duration) * 100;
+                        updateProgress(progress);
+                    }
+
+                    if (progress >= 100 || audio.ended) { // or audio.ended
+                        stopProgress();
+                        progress = 0;
+                        isPlaying = false;
+                        hasFinished = true;
+                        playButton.innerHTML = '▶';
+                        resetSite();
+                        updateProgress(0);
+                    }
+                }, 50); // Reduced interval for smoother updates
+            }
+        }
+
 
         function stopProgress() {
             clearInterval(progressInterval);
         }
 
-        // Particle System setup continues as is...
-        class Particle {
-            constructor(x, y, color) {
-                this.x = x;
-                this.y = y;
-                this.originX = x;
-                this.originY = y;
-                this.color = color;
-                this.size = Math.random() * 3 + 2;
-                this.velocity = {
-                    x: Math.random() * 0.2 - 0.1,
-                    y: -Math.random() * 0.5 - 0.5
-                };
-                this.life = 1.5;
-                this.maxLife = Math.random() * 200 + 100;
-                this.age = 0;
-            }
+        function resetSite() {
+            // Reset the color scheme to the initial state
+            Object.entries(stages.denial.colors).forEach(([property, value]) => {
+                document.documentElement.style.setProperty(property, value);
+            });
 
-            update(flowField) {
-                // Flow field influence
-                const cellX = Math.floor(this.x / flowField.cellSize);
-                const cellY = Math.floor(this.y / flowField.cellSize);
-                const index = cellY * flowField.cols + cellX;
-
-                if (flowField.field[index]) {
-                    this.velocity.x += flowField.field[index].x * 0.1;
-                    this.velocity.y += flowField.field[index].y * 0.1;
+            // Reset the description containers to the initial state
+            descriptionContainers.forEach(desc => {
+                if (desc.dataset.stage === 'intro') {
+                    desc.classList.add('active');
+                    desc.classList.remove('hidden');
+                } else {
+                    desc.classList.remove('active');
+                    desc.classList.add('hidden');
                 }
+            });
 
-                // Update position
-                this.x += this.velocity.x;
-                this.y += this.velocity.y;
-
-                // Age particle
-                this.age++;
-                this.life = Math.max(0, 1 - (this.age / this.maxLife));
-
-                // Reset if offscreen or dead
-                if (this.y < 0 || this.x < 0 || this.x > window.innerWidth || this.life <= 0) {
-                    this.reset();
-                }
-            }
-
-            reset() {
-                this.x = Math.random() * window.innerWidth;
-                this.y = window.innerHeight + 10;
-                this.age = 0;
-                this.life = 1;
-                this.velocity.x = Math.random() * 0.2 - 0.1;
-                this.velocity.y = -Math.random() * 0.5 - 0.5;
-            }
-
-            draw(ctx) {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                const alpha = this.life * 0.8; // Increased base opacity
-                ctx.fillStyle = `rgba(${this.color.join(',')},${alpha})`;
-                ctx.fill();
-            }
+            // Update the stage indicator
+            const stageIndicator = document.querySelector('.stage-indicator');
+            stageIndicator.textContent = 'Current Stage: Denial';
         }
+
 
         class FlowField {
             constructor() {
-                this.cellSize = 50;
+                this.cellSize = 20; // Reduced cell size for more detail
                 this.rows = Math.ceil(window.innerHeight / this.cellSize);
                 this.cols = Math.ceil(window.innerWidth / this.cellSize);
                 this.field = [];
@@ -527,7 +693,7 @@
             }
 
             update() {
-                this.animationOffset += 0.01;
+                this.animationOffset += 0.005; // Slower animation
                 for (let y = 0; y < this.rows; y++) {
                     for (let x = 0; x < this.cols; x++) {
                         const angle = (Math.cos(x * 0.1 + this.animationOffset) +
@@ -541,81 +707,126 @@
             }
         }
 
-        // Canvas setup
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.color = stageColors.intro; // Set default color
+                this.size = Math.random() * 2 + 1;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 0.5,
+                    y: (Math.random() - 0.5) * 0.5
+                };
+                this.life = 1;
+                this.maxLife = Math.random() * 100 + 50;
+                this.age = 0;
+            }
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+            update(flowField) {
+                const cellX = Math.floor(this.x / flowField.cellSize);
+                const cellY = Math.floor(this.y / flowField.cellSize);
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+                if (cellX >= 0 && cellX < flowField.cols &&
+                    cellY >= 0 && cellY < flowField.rows) {
+                    const index = cellY * flowField.cols + cellX;
+                    if (flowField.field[index]) {
+                        this.velocity.x += flowField.field[index].x * 0.05;
+                        this.velocity.y += flowField.field[index].y * 0.05;
+                    }
+                }
 
-        // Initialize particles and flow field
-        const flowField = new FlowField();
-        const particles = [];
-        const particleCount = 200;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
 
-        function getColorFromStage(timeInSeconds) {
-            // Define vibrant colors for each stage
-            const stageColors = {
-                denial: [100, 149, 237],  // Bright cornflower blue
-                anger: [255, 69, 58],     // Vibrant red
-                bargaining: [255, 191, 0], // Golden yellow
-                depression: [138, 43, 226], // Vibrant purple
-                acceptance: [46, 204, 113]  // Emerald green
-            };
+                this.age++;
+                this.life = Math.max(0, 1 - (this.age / this.maxLife));
 
-            let currentStage = 'denial';
-            for (const [stage, data] of Object.entries(stages)) {
-                if (timeInSeconds >= data.time) {
-                    currentStage = stage;
+                if (this.y < 0 || this.x < 0 ||
+                    this.x > window.innerWidth ||
+                    this.y > window.innerHeight ||
+                    this.life <= 0) {
+                    this.reset();
                 }
             }
 
-            const baseColor = stageColors[currentStage];
-            // Add color variation for each particle
-            return [
-                Math.min(baseColor[0] + (Math.random() * 30 - 15), 255),
-                Math.min(baseColor[1] + (Math.random() * 30 - 15), 255),
-                Math.min(baseColor[2] + (Math.random() * 30 - 15), 255)
-            ];
+            reset() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = window.innerHeight;
+                this.age = 0;
+                this.life = 1;
+                this.velocity.x = (Math.random() - 0.5) * 0.5;
+                this.velocity.y = -Math.random() * 0.5 - 0.2;
+            }
+
+            draw(ctx) {
+                if (!Array.isArray(this.color)) {
+                    this.color = stageColors.intro; // Fallback if color is invalid
+                }
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                const alpha = this.life * 0.6;
+                ctx.fillStyle = `rgba(${this.color.join(',')},${alpha})`;
+                ctx.fill();
+            }
         }
 
-        // Initialize particles
-        for (let i = 0; i < particleCount; i++) {
-            const x = Math.random() * canvas.width;
-            const y = canvas.height + 10;
-            const color = getColorFromStage(0);
-            particles.push(new Particle(x, y, color));
-        }
+        // Initialize particles with proper color
+        function initParticleSystem() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
 
-        // Animation loop
-        // Update the animation loop to clear background properly
-        function animate() {
-            // Clear the canvas completely
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
 
-            flowField.update();
-
-            // Update particle colors based on current stage
-            const timeInSeconds = (progress / 100) * 50;
-            const currentColor = getColorFromStage(timeInSeconds);
-
-            particles.forEach(particle => {
-                // Update particle color smoothly
-                particle.color = currentColor;
-                particle.update(flowField);
-                particle.draw(ctx);
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                flowField = new FlowField();
             });
+            resizeCanvas();
+
+            let flowField = new FlowField();
+            const particles = [];
+            const particleCount = 150;
+
+            // Create particles with initial color
+            for (let i = 0; i < particleCount; i++) {
+                const x = Math.random() * canvas.width;
+                const y = canvas.height + Math.random() * 20;
+                const particle = new Particle(x, y);
+                particle.color = stageColors.intro; // Set initial color
+                particles.push(particle);
+            }
+
+            let lastTime = 0;
+            function animate(timestamp) {
+                const deltaTime = timestamp - lastTime;
+                lastTime = timestamp;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                flowField.update();
+
+                // Get current color based on progress
+                const timeInSeconds = (progress / 100) * 50;
+                const currentColor = getColorFromStage(timeInSeconds);
+
+                // Update and draw particles
+                particles.forEach(particle => {
+                    particle.color = currentColor; // Update color
+                    particle.update(flowField);
+                    particle.draw(ctx);
+                });
+
+                requestAnimationFrame(animate);
+            }
 
             requestAnimationFrame(animate);
         }
 
-        animate();
-
+        // Start the particle system when the page loads
+        document.addEventListener('DOMContentLoaded', initParticleSystem);
     </script>
 </body>
 
