@@ -3,23 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery with Descriptions and Audio</title>
+    <title> Image Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Domine:wght@400..700&display=swap" rel="stylesheet">
+    
     <style>
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Domine','Roboto', sans-serif;
+           /* background-color: #f0f4f8; */
             color: #333;
-            padding: 2rem;
+            background-color: #E4E4DE
         }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.7;
+            /* Added for better visibility of particles */
+        }
+
+
 
         /* Menu Bar Styles */
         .menu-bar {
             display: flex;
             justify-content: center;
-            background-color: #fff;
+            background-color: #ffffff;
             padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -28,18 +47,21 @@
         .menu-bar a {
             text-decoration: none;
             color: #333;
-            margin: 0 2rem;
+            margin: 0 1.5rem;
             font-size: 1.25rem;
-            transition: color 0.3s ease;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.3s ease;
         }
 
         .menu-bar a:hover {
-            color: #4CAF50;
+            color: #595f39;
+            transform: translateY(-3px);
         }
 
         .menu-bar a.active {
-            color: #4CAF50;
+            color: #595f39;
             font-weight: bold;
+            border-bottom: 2px solid #595f39;
         }
 
         .gallery-container {
@@ -52,24 +74,27 @@
 
         .image-card {
             display: flex;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #C4C5BA;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: transform 0.2s ease-in-out;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         }
 
         .image-card:hover {
-            transform: scale(1.02);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
         .image-card img {
             width: 50%;
             object-fit: cover;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
         }
 
         .image-description {
-            padding: 1rem;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -77,36 +102,47 @@
         }
 
         .image-description h3 {
-            margin: 0 0 0.5rem;
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #333;
         }
 
-        .audio-player {
-            margin-top: 1rem;
+        .image-description p {
+            font-size: 1rem;
+            color: #666;
+            margin: 0.5rem 0;
         }
 
         .audio-player audio {
             width: 100%;
+            border-radius: 5px;
         }
     </style>
 </head>
+
 <body>
+
     <!-- Menu Bar -->
     <div class="menu-bar">
         <a href="index.html">Home</a>
         <a href="story.html" class="active">Story</a>
+        <a href="team.html">Team</a>
+
     </div>
 
-    <h1 class="title">Image Gallery with Audio Descriptions</h1>
+    <h1 class="title" style="text-align: center; font-family: 'Playfair Display', serif; margin-bottom: 2rem;">Image Gallery with Audio Descriptions</h1>
     <div class="gallery-container">
         <!-- Repeat this block for each image -->
         <div class="image-card">
-            <img src="image1.jpg" alt="Description of Image 1">
+            <img src="heartbeat.png" alt="Description of Image 1">
             <div class="image-description">
-                <h3>Image 1 Title</h3>
-                <p>This is a brief description of Image 1. It could include context or background details relevant to the image.</p>
+                <h3>Heartbeat</h3>
+                <p>With a little bit of editing, the sound of a foot tapping on the carpet was a good base for the thumping of a heart
+                </p>
                 <div class="audio-player">
                     <audio controls>
-                        <source src="audio1.mp3" type="audio/mpeg">
+                        <source src="heartbeat.WAV" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                 </div>
@@ -114,28 +150,13 @@
         </div>
 
         <div class="image-card">
-            <img src="image2.jpg" alt="Description of Image 2">
+            <img src="sensor.png" alt="Description of Image 2">
             <div class="image-description">
-                <h3>Image 2 Title</h3>
-                <p>This is a brief description of Image 2. It could include context or background details relevant to the image.</p>
+                <h3>Heartbeat sensor</h3>
+                <p>Using the beep of the printer, we recreated the mechanical beeps of a heart rate monitor.</p>
                 <div class="audio-player">
                     <audio controls>
-                        <source src="audio2.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
-                </div>
-            </div>
-        </div>
-
-        <!-- Repeat the structure for 6 more images -->
-        <div class="image-card">
-            <img src="image3.jpg" alt="Description of Image 3">
-            <div class="image-description">
-                <h3>Image 3 Title</h3>
-                <p>This is a brief description of Image 3. It could include context or background details relevant to the image.</p>
-                <div class="audio-player">
-                    <audio controls>
-                        <source src="audio3.mp3" type="audio/mpeg">
+                        <source src="Heartbeat Sensor (Intro).WAV" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                 </div>
@@ -143,13 +164,14 @@
         </div>
 
         <div class="image-card">
-            <img src="image4.jpg" alt="Description of Image 4">
+            <img src="guitar.jpg" alt="Description of Image 2">
             <div class="image-description">
-                <h3>Image 4 Title</h3>
-                <p>This is a brief description of Image 4. It could include context or background details relevant to the image.</p>
+                <h3>Guitar (acceptance)</h3>
+                <p>With the help of our friend Sanchith, we recreated the riff from the song Pluto Projector which is used in different forms throughout the stages of grief, symbolizing the protagonist’s development. 
+                </p>
                 <div class="audio-player">
                     <audio controls>
-                        <source src="audio4.mp3" type="audio/mpeg">
+                        <source src="Guitar (Acceptance).WAV" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                 </div>
@@ -157,13 +179,14 @@
         </div>
 
         <div class="image-card">
-            <img src="image5.jpg" alt="Description of Image 5">
+            <img src="drums.png" alt="Description of Image 2">
             <div class="image-description">
-                <h3>Image 5 Title</h3>
-                <p>This is a brief description of Image 5. It could include context or background details relevant to the image.</p>
+                <h3>Drums</h3>
+                <p>The sound of banging drums perfectly captures the feeling of anger, progressively getting faster and messier 
+                </p>
                 <div class="audio-player">
                     <audio controls>
-                        <source src="audio5.mp3" type="audio/mpeg">
+                        <source src="Drums (anger`.WAV" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                 </div>
@@ -171,13 +194,14 @@
         </div>
 
         <div class="image-card">
-            <img src="image6.jpg" alt="Description of Image 6">
+            <img src="piano.png" alt="Description of Image 2">
             <div class="image-description">
-                <h3>Image 6 Title</h3>
-                <p>This is a brief description of Image 6. It could include context or background details relevant to the image.</p>
+                <h3>Piano (depression)</h3>
+                <p>Singular, dissonant notes are used as the backdrop to various stages, eventually leading to the iconic melody from the song Runaway as acceptance nears 
+                </p>
                 <div class="audio-player">
                     <audio controls>
-                        <source src="audio6.mp3" type="audio/mpeg">
+                        <source src="Piano (Depression).WAV" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                 </div>
@@ -185,32 +209,50 @@
         </div>
 
         <div class="image-card">
-            <img src="image7.jpg" alt="Description of Image 7">
+            <img src="scribble.png" alt="Description of Image 2">
             <div class="image-description">
-                <h3>Image 7 Title</h3>
-                <p>This is a brief description of Image 7. It could include context or background details relevant to the image.</p>
+                <h3>Scribbling</h3>
+                <p>The sound of a pen scribbling furiously against paper creates a sense of anxiety and desperation that is representative of the bargaining stage
+                </p>
                 <div class="audio-player">
                     <audio controls>
-                        <source src="audio7.mp3" type="audio/mpeg">
+                        <source src="Scribbling.WAV" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+        <div class="image-card">
+            <img src="scream.png" alt="Description of Image 2">
+            <div class="image-description">
+                <h3>Pillow scream</h3>
+                <p>Screaming into a pillow during fits of frustration is something that everyone can relate to, making it the perfect sound to represent the stage of anger 
+                </p>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="Pillow Scream (Anger).WAV" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+        <div class="image-card">
+            <img src="doctor.jpeg" alt="Description of Image 2">
+            <div class="image-description">
+                <h3>Doctor</h3>
+                <p>An incredible musician and voice actor, the project wouldn’t have been possible without the help of our dear friend Sanchith
+                </p>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="Doctor (Denial).WAV" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                 </div>
             </div>
         </div>
 
-        <div class="image-card">
-            <img src="image8.jpg" alt="Description of Image 8">
-            <div class="image-description">
-                <h3>Image 8 Title</h3>
-                <p>This is a brief description of Image 8. It could include context or background details relevant to the image.</p>
-                <div class="audio-player">
-                    <audio controls>
-                        <source src="audio8.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
-                </div>
-            </div>
-        </div>
     </div>
+
+
 </body>
 </html>
