@@ -6,14 +6,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Domine:wght@400..700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-primary: #E4E4DE;
+       :root {
+            --bg-primary: #F2E9E4;
             --text-primary: #333;
             --card-bg: #fff;
-            --accent: #595f39;
+            --accent: #C9ADA7;
             transition: all 1s ease;
         }
-
 
         body {
             margin: 0;
@@ -291,7 +290,7 @@
     </div>
 
     <div class="player-container collapsed">
-        <button class="play-button">▶</button>
+        <button class="play-button">▶️</button>
         <div class="progress-container">
             <div class="progress-bar"></div>
             <div class="progress-handle"></div>
@@ -322,22 +321,23 @@
         let hasFinished = false;
         // Define colors outside animation loop for consistency
         const stageColors = {
-            intro: [100, 149, 237],     // Cornflower blue
-            denial: [100, 149, 237],    // Cornflower blue
-            anger: [255, 69, 58],       // Red
-            bargaining: [255, 191, 0],  // Golden yellow
-            depression: [138, 43, 226],  // Purple
-            acceptance: [46, 204, 113]   // Green
-        };
+            intro: [242, 233, 228],     // #F2E9E4 - Light beige for the intro
+            denial: [74, 78, 105],      // #4A4E69 - Dark blue-gray for Denial
+            anger: [34, 34, 59],        // #22223B - Deep blue-gray for Anger
+            bargaining: [201, 173, 167],// #C9ADA7 - Warm beige for Bargaining
+            depression: [154, 140, 152],// #9A8C98 - Grayish purple for Depression
+            acceptance: [242, 233, 228] // #F2E9E4 - Light beige for Acceptance
+};
+
 
         const stages = {
             intro: {
                 time: 0,
                 colors: {
-                    '--bg-primary': '#f5f5f5',
+                    '--bg-primary': '#F2E9E4',
                     '--text-primary': '#333',
                     '--card-bg': '#fff',
-                    '--accent': '#4CAF50'
+                    '--accent': '#C9ADA7'
                 },
                 content: `
             <p>The five stages of grief, known as the Kübler-Ross model, describe a series of emotions experienced during profound loss: denial, anger, bargaining, depression, and acceptance.</p>
@@ -348,10 +348,10 @@
             denial: {
                 time: 45,
                 colors: {
-                    '--bg-primary': '#4A4E6',
-                    '--text-primary': '#334155',
-                    '--card-bg': '#ffffff',
-                    '--accent': '#94a3b8'
+                    '--bg-primary': '#4A4E69',
+                    '--text-primary': '#e6d3cf',
+                    '--card-bg': '#9A8C98',
+                    '--accent': '#22223B'
                 },
                 content: `
             <h2>Stage 1: Denial</h2>
@@ -362,10 +362,10 @@
             anger: {
                 time: 79,
                 colors: {
-                    '--bg-primary': '#fee2e2',
-                    '--text-primary': '#7f1d1d',
-                    '--card-bg': '#fecaca',
-                    '--accent': '#dc2626'
+                    '--bg-primary': '#22223B',
+                    '--text-primary': '#F2E9E4',
+                    '--card-bg': '#4A4E69',
+                    '--accent': '#9A8C98'
                 },
                 content: `
             <h2>Stage 2: Anger</h2>
@@ -376,10 +376,10 @@
             bargaining: {
                 time: 99,
                 colors: {
-                    '--bg-primary': '#fef9c3',
-                    '--text-primary': '#854d0e',
-                    '--card-bg': '#fef08a',
-                    '--accent': '#ca8a04'
+                    '--bg-primary': '#C9ADA7',
+                    '--text-primary': '#4A4E69',
+                    '--card-bg': '#F2E9E4',
+                    '--accent': '#22223B'
                 },
                 content: `
             <h2>Stage 3: Bargaining</h2>
@@ -390,10 +390,10 @@
             depression: {
                 time: 120,
                 colors: {
-                    '--bg-primary': '#e0e7ff',
-                    '--text-primary': '#312e81',
-                    '--card-bg': '#c7d2fe',
-                    '--accent': '#4338ca'
+                    '--bg-primary': '#9A8C98',
+                    '--text-primary': '#4A4E69',
+                    '--card-bg': '#F2E9E4',
+                    '--accent': '#C9ADA7'
                 },
                 content: `
             <h2>Stage 4: Depression</h2>
@@ -404,10 +404,10 @@
             acceptance: {
                 time: 140,
                 colors: {
-                    '--bg-primary': '#dcfce7',
-                    '--text-primary': '#166534',
-                    '--card-bg': '#bbf7d0',
-                    '--accent': '#16a34a'
+                    '--bg-primary': '#F2E9E4',
+                    '--text-primary': '#22223B',
+                    '--card-bg': '#C9ADA7',
+                    '--accent': '#9A8C98'
                 },
                 content: `
             <h2>Stage 5: Acceptance</h2>
@@ -502,7 +502,7 @@
             progress = 0;
             isPlaying = false;
             hasFinished = true;
-            playButton.innerHTML = '▶';
+            playButton.innerHTML = '▶️';
             resetSite();
             updateProgress(0); // Reset progress bar visually
         });
@@ -578,7 +578,7 @@
             }
 
             isPlaying = !isPlaying;
-            playButton.innerHTML = isPlaying ? '❚❚' : '▶';
+            playButton.innerHTML = isPlaying ? '❚❚' : '▶️';
 
             if (isPlaying) {
                 audio.play();
@@ -640,7 +640,7 @@
                         progress = 0;
                         isPlaying = false;
                         hasFinished = true;
-                        playButton.innerHTML = '▶';
+                        playButton.innerHTML = '▶️';
                         resetSite();
                         updateProgress(0);
                     }
